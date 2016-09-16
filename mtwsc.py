@@ -27,8 +27,12 @@ class Mtwsc(object):
     def grab_data(self):
         while not self.q.empty():
             url = self.q.get()
-            r = requests.get(url.strip())
-            self.hilos.append(r.text)
+            try:
+                r = requests.get(url.strip())
+                self.hilos.append(r.text)
+                print "Incorporado %s" % url.strip()
+            except:
+                print "!!! Error en hilo %s" % url.strip()
             self.q.task_done()
 
     def download(self,threads=1):
@@ -49,7 +53,7 @@ class Mtwsc(object):
 
 if __name__ == "__main__":
     url = "http://forocoches.com"
-    forocoches = Mtwsc('http://forocoches.com',10,re.compile(r'showthread\.php\?t=',re.U))
+    forocoches = Mtwsc('http://forocoches.com',50,re.compile(r'showthread\.php\?t=',re.U))
     startTime = datetime.now()
     print "Scraping ..."
     forocoches.download(10)
